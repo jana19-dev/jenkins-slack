@@ -5,20 +5,6 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
-def getJobName() {
-  jobName = "${env.JOB_NAME}"
-  // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-}
-
-def getGitAuthor() {
-  def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-  author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
-}
-
-def populateGlobalVariables() {
-  getJobName()
-}
 
 @NonCPS
 def getTestSummary() {
@@ -71,8 +57,6 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
 
-  populateGlobalVariables()
-
   def attachments = []
   if (buildStatus == 'STARTED') {
     attachments = buildStartingMessage(jobName, commitMessage, author)
@@ -95,7 +79,7 @@ def buildStartingMessage(String jobName = "", String commitMessage = "", String 
       fields: [
         [
           title: "Branch",
-          value: "${env.BRANCH_NAME}",
+          value: "$env.BRANCH_NAME",
           short: true
         ],
         [
@@ -119,7 +103,7 @@ def buildSuccessMessage(String jobName = "", String commitMessage = "", String a
       fields: [
         [
           title: "Branch",
-          value: "${env.BRANCH_NAME}",
+          value: "$env.BRANCH_NAME",
           short: true
         ],
         [
@@ -150,7 +134,7 @@ def buildFailureMessage(String jobName = "", String commitMessage = "", String a
       fields: [
         [
           title: "Branch",
-          value: "${env.BRANCH_NAME}",
+          value: "$env.BRANCH_NAME",
           short: true
         ],
         [
@@ -183,5 +167,5 @@ def notifySlack(text, channel, attachments) {
     icon_url: jenkinsIcon,
     attachments: attachments
   ])
-  sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
+  sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
 }

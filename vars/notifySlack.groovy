@@ -51,7 +51,7 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String tes
   }
 
   @NonCPS
-  def getFailedTests = { ->
+  def getAllFailedTests = { ->
       def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
       def failedTestsString = "```"
 
@@ -124,7 +124,7 @@ def buildSuccessMessage() {
 
 def buildFailureMessage() {
   def testSummary = getTestSummary()
-  def failedTestsString = getFailedTests()
+  def failedTestsString = getAllFailedTests()
   return [
     [
       title: "${jobName}, build #${env.BUILD_NUMBER} :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",

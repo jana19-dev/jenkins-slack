@@ -48,22 +48,22 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
-def call(String buildStatus = "STARTED", String channel = '#general', String branch = "", String commitMessage = "", String author = "") {
+def call(String buildStatus = "STARTED", String channel = '#general', String commitMessage = "", String author = "") {
 
   // build status of null means ongoing build
   def attachments = []
   if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage(branch, commitMessage, author)
+    attachments = buildStartingMessage(commitMessage, author)
   } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage(branch, commitMessage, author)
+    attachments = buildSuccessMessage(commitMessage, author)
   } else {
-    attachments = buildFailureMessage(branch, commitMessage, author)
+    attachments = buildFailureMessage(commitMessage, author)
   }
 
   notifySlack("", channel, attachments)
 }
 
-def buildStartingMessage(String branch = "", String commitMessage = "", String author = "") {
+def buildStartingMessage(String commitMessage = "", String author = "") {
   return [
     [
       title: "$env.BUILD_TAG :fingers_crossed:",
@@ -71,40 +71,6 @@ def buildStartingMessage(String branch = "", String commitMessage = "", String a
       color: "warning",
       text: "BUILD STARTED by $author",
       fields: [
-        [
-          title: "Branch",
-          value: "$env.BRANCH_NAME",
-          short: true
-        ],
-        [
-          title: "Last Commit",
-          value: commitMessage,
-          short: true
-        ]
-      ]
-    ]
-  ]
-}
-
-def buildSuccessMessage(String branch = "", String commitMessage = "", String author = "") {
-  def testSummary = getTestSummary()
-  return [
-    [
-      title: "$env.BUILD_TAG :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
-      title_link: "$env.BUILD_URL",
-      color: "good",
-      text: "SUCCESS\n$author",
-      fields: [
-        [
-          title: "Branch",
-          value: "$env.BRANCH_NAME",
-          short: true
-        ],
-        [
-          title: "Test Results",
-          value: testSummary,
-          short: true
-        ],
         [
           title: "Last Commit",
           value: commitMessage,
@@ -115,7 +81,31 @@ def buildSuccessMessage(String branch = "", String commitMessage = "", String au
   ]
 }
 
-def buildFailureMessage(String branch = "", String commitMessage = "", String author = "") {
+def buildSuccessMessage(String commitMessage = "", String author = "") {
+  def testSummary = getTestSummary()
+  return [
+    [
+      title: "$env.BUILD_TAG :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
+      title_link: "$env.BUILD_URL",
+      color: "good",
+      text: "SUCCESS\n$author",
+      fields: [
+        [
+          title: "Last Commit",
+          value: commitMessage,
+          short: true
+        ],
+        [
+          title: "Test Results",
+          value: testSummary,
+          short: true
+        ]
+      ]
+    ]
+  ]
+}
+
+def buildFailureMessage(String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [
@@ -127,19 +117,14 @@ def buildFailureMessage(String branch = "", String commitMessage = "", String au
       "mrkdwn_in": ["fields"],
       fields: [
         [
-          title: "Branch",
-          value: "$env.BRANCH_NAME",
+          title: "Last Commit",
+          value: commitMessage,
           short: true
         ],
         [
           title: "Test Results",
           value: "${testSummary}",
           short: true
-        ],
-        [
-          title: "Last Commit",
-          value: commitMessage,
-          short: false
         ]
       ]
     ],

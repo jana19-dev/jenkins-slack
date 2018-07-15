@@ -5,20 +5,23 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
+def jobName = ""
+def author = ""
+def commitMessage = ""
 
 def getJobName() {
   jobName = "${env.JOB_NAME}"
   // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-  return jobName.getAt(0..(jobName.indexOf('/') - 1))
+  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 }
 
 def getLastCommitMessage() {
-  return sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+  commitMessage = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 }
 
 def getGitAuthor() {
   def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-  return sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
+  author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
 }
 
 

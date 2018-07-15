@@ -22,7 +22,6 @@ def getGitAuthor = {
 }
 
 
-@NonCPS
 def getTestSummary = { ->
   def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
   def summary = ""
@@ -42,7 +41,6 @@ def getTestSummary = { ->
   return summary
 }
 
-@NonCPS
 def getAllFailedTests = { ->
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def failedTestsString = "```"

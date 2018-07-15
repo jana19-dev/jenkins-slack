@@ -66,42 +66,44 @@ def buildSuccessMessage() {
 
 def buildFailureMessage(String globalError = "") {
   def testSummary = getTestSummary()
-  def failedTestsString = getAllFailedTests()
-  return [
-    [
-      title: "$env.JOB_NAME-$env.BUILD_NUMBER  :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
-      title_link: "$env.BUILD_URL",
-      color: "danger",
-      text: "Failed after ${currentBuild.durationString}",
-      "mrkdwn_in": ["fields"],
-      fields: [
-        [
-          title: "Commit by $COMMIT_AUTHOR",
-          value: COMMIT_MESSAGE,
-          short: true
-        ],
-        [
-          title: "Test Results",
-          value: "${testSummary}",
-          short: true,
-          text: failedTestsString,
-          "mrkdwn_in": ["text"],
-        ]
+  def message = []
+  message.add([
+    title: "$env.JOB_NAME-$env.BUILD_NUMBER  :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+    title_link: "$env.BUILD_URL",
+    color: "danger",
+    text: "Failed after ${currentBuild.durationString}",
+    "mrkdwn_in": ["fields"],
+    fields: [
+      [
+        title: "Commit by $COMMIT_AUTHOR",
+        value: COMMIT_MESSAGE,
+        short: true
+      ],
+      [
+        title: "Test Results",
+        value: "${testSummary}",
+        short: true
       ]
-    ],
-    [
+    ]
+  ])
+  def failedTestsString = getAllFailedTests()
+  if (failedTestsString!='``````') {
+    message.add([
       title: "Failed Tests",
       color: "danger",
       text: failedTestsString,
       "mrkdwn_in": ["text"],
-    ],
-    [
+    ])
+  }
+  if (globalError) {
+    message.add([
       title: "Error Details",
       color: "danger",
       text: globalError,
       "mrkdwn_in": ["text"],
-    ]
-  ]
+    ])
+  }
+  return message
 }
 
 def notifySlack(text, channel, attachments) {

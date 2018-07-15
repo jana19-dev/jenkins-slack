@@ -5,10 +5,6 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
-def jobName = ""
-def author = ""
-def commitMessage = ""
-
 def getJobName() {
   jobName = "${env.JOB_NAME}"
   // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
@@ -74,6 +70,10 @@ def getAllFailedTests() {
  * Send Slack notification to the channel given based on buildStatus string
  */
 def call(String buildStatus = 'STARTED', String channel = '#general', String testSummary = "", String failedTests = "") {
+  def jobName = ""
+  def author = ""
+  def commitMessage = ""
+
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
 

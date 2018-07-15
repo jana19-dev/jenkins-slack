@@ -5,37 +5,26 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
-
-
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
 def call(String buildStatus = 'STARTED', String channel = '#general', String testSummary = "", String failedTests = "") {
 
-  def jobName = ""
-  def author = ""
-  def commitMessage = ""
-
   def getJobName = {
     jobName = "${env.JOB_NAME}"
     // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+    return jobName.getAt(0..(jobName.indexOf('/') - 1))
   }
 
   def getLastCommitMessage = {
-    commitMessage = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+    return sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
   }
 
   def getGitAuthor = {
     def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-    author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
+    return sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
   }
 
-  def populateGlobalVariables = {
-    getJobName()
-    getLastCommitMessage()
-    getGitAuthor()
-  }
 
   @NonCPS
   def getTestSummary = { ->
@@ -76,8 +65,6 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String tes
       }
       return failedTestsString
   }
-
-  populateGlobalVariables()
 
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'

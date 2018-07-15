@@ -80,7 +80,7 @@ def buildFailureMessage(String globalError = "") {
         ],
         [
           title: "Test Results",
-          value: "${testSummary}",
+          value: testSummary,
           short: true
         ]
       ]
@@ -88,7 +88,7 @@ def buildFailureMessage(String globalError = "") {
     [
       title: "Error Details",
       color: "danger",
-      text: '```'+"$globalError"+'```',
+      text: '```'+"${globalError}"+'```',
       "mrkdwn_in": ["text"],
     ]
   ]

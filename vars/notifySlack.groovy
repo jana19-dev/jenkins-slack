@@ -5,51 +5,11 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.tasks.junit.CaseResult
 
 
-@NonCPS
-def getTestSummary() {
-  def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-  def summary = ""
-
-  if (testResultAction != null) {
-    def total = testResultAction.getTotalCount()
-    def failed = testResultAction.getFailCount()
-    def skipped = testResultAction.getSkipCount()
-
-    summary = "Passed: " + (total - failed - skipped)
-    summary = summary + (", Failed: " + failed)
-    summary = summary + (", Skipped: " + skipped)
-  }
-  else {
-    summary = "No tests found"
-  }
-  return summary
-}
-
-@NonCPS
-def getAllFailedTests() {
-    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-    def failedTestsString = "```"
-
-    if (testResultAction != null) {
-      failedTests = testResultAction.getFailedTests()
-
-      if (failedTests.size() > 9) {
-        failedTests = failedTests.subList(0, 8)
-      }
-
-      for(CaseResult cr : failedTests) {
-        failedTestsString = failedTestsString + "${cr.getFullDisplayName()}\n"
-      }
-      failedTestsString = failedTestsString + "```"
-    }
-    return failedTestsString
-}
-
 /**
- * Send Slack notification to the channel given based on errorOccured string
+ * Send Slack notification to SLACK_CHANNEL based on errorOccured
  */
 def call(errorOccured = null) {
-  // build status of null means ongoing build
+  // errorOccured of null means ongoing build
   def attachments = []
   if (errorOccured == null) {
     attachments = buildStartingMessage()
@@ -58,20 +18,20 @@ def call(errorOccured = null) {
   } else {
     attachments = buildFailureMessage(errorOccured)
   }
-
-  notifySlack("", CHANNEL, attachments)
+  notifySlack("", SLACK_CHANNEL, attachments)
 }
+
 
 def buildStartingMessage() {
   return [
     [
-      title: "$env.BUILD_TAG :fingers_crossed:",
+      title: "$env.JOB_NAME-$env.BUILD_NUMBER :fingers_crossed:",
       title_link: "$env.BUILD_URL",
       color: "warning",
-      text: "BUILD STARTED by $AUTHOR",
+      text: "Started",
       fields: [
         [
-          title: "Last Commit",
+          title: "Commit by $COMMIT_AUTHOR",
           value: COMMIT_MESSAGE,
           short: false
         ]
@@ -84,13 +44,13 @@ def buildSuccessMessage() {
   def testSummary = getTestSummary()
   return [
     [
-      title: "$env.BUILD_TAG :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
+      title: "$env.JOB_NAME-$env.BUILD_NUMBER  :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance:",
       title_link: "$env.BUILD_URL",
       color: "good",
-      text: "SUCCESS by $AUTHOR: Duration ${currentBuild.durationString}",
+      text: "Success after ${currentBuild.durationString}",
       fields: [
         [
-          title: "Last Commit",
+          title: "Commit by $COMMIT_AUTHOR",
           value: COMMIT_MESSAGE,
           short: true
         ],
@@ -109,14 +69,14 @@ def buildFailureMessage(String globalError = "") {
   def failedTestsString = getAllFailedTests()
   return [
     [
-      title: "$env.BUILD_TAG :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+      title: "$env.JOB_NAME-$env.BUILD_NUMBER  :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
       title_link: "$env.BUILD_URL",
       color: "danger",
-      text: "FAILED by $AUTHOR: Duration ${currentBuild.durationString}",
+      text: "Failed after ${currentBuild.durationString}",
       "mrkdwn_in": ["fields"],
       fields: [
         [
-          title: "Last Commit",
+          title: "Commit by $COMMIT_AUTHOR",
           value: COMMIT_MESSAGE,
           short: true
         ],
@@ -134,7 +94,7 @@ def buildFailureMessage(String globalError = "") {
       "mrkdwn_in": ["text"],
     ],
     [
-      title: "General Error",
+      title: "Other Error",
       color: "danger",
       text: globalError,
       "mrkdwn_in": ["text"],
@@ -154,4 +114,34 @@ def notifySlack(text, channel, attachments) {
   withCredentials([string(credentialsId: '160a1dfe-afa8-47f1-8867-19b88ee52530', variable: 'slackURL')]) {
     sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
   }
+}
+
+
+@NonCPS
+def getTestSummary() {
+  def summary = "No tests found"
+  def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+  if (testResultAction != null) {
+    def total = testResultAction.getTotalCount()
+    def failed = testResultAction.getFailCount()
+    def skipped = testResultAction.getSkipCount()
+    summary = "Passed: " + (total - failed - skipped)
+    summary = summary + (", Failed: " + failed)
+    summary = summary + (", Skipped: " + skipped)
+  }
+  return summary
+}
+
+@NonCPS
+def getAllFailedTests() {
+  def failedTestsString = "```"
+  def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+  if (testResultAction != null) {
+    failedTests = testResultAction.getFailedTests()
+    for(CaseResult cr : failedTests) {
+      failedTestsString = failedTestsString + "${cr.getFullDisplayName()}\n"
+    }
+  }
+  failedTestsString = failedTestsString + "```"
+  return failedTestsString
 }

@@ -2,6 +2,6 @@
 
 <p>
     Sends notification via Slack.
-    Defaults to sending "BUILD STARTED" notification if errorOccured==null.
-    Pass the errorOccured string/boolean and it will customize the notifications based on that.
+    Defaults to sending "Started" notification if errorOccured==null.
+    Pass the errorOccured string/boolean and it will customize the notification based on that.
 </p>

@@ -104,7 +104,7 @@ def buildSuccessMessage() {
   ]
 }
 
-def buildFailureMessage(, String globalError = "") {
+def buildFailureMessage(String globalError = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [

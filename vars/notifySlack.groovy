@@ -58,13 +58,13 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
   buildStatus =  buildStatus ?: 'SUCCESS'
 
   def attachments = []
-  if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage(jobName, commitMessage, author)
-  } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage(jobName, commitMessage, author)
-  } else {
-    attachments = buildFailureMessage(jobName, commitMessage, author)
-  }
+  // if (buildStatus == 'STARTED') {
+  //   attachments = buildStartingMessage(jobName, commitMessage, author)
+  // } else if (buildStatus == 'SUCCESS') {
+  //   attachments = buildSuccessMessage(jobName, commitMessage, author)
+  // } else {
+  //   attachments = buildFailureMessage(jobName, commitMessage, author)
+  // }
 
   notifySlack("", channel, attachments)
 }

@@ -64,7 +64,7 @@ def getAllFailedTests() {
  * Send Slack notification to the channel given based on buildStatus string
  */
 def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "", String author = "") {
-  def jobName = "${env.JOB_NAME}"
+  def jobName = "$env.JOB_NAME"
   // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
   jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
@@ -75,21 +75,21 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
 
   def attachments = []
   if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage(commitMessage, author)
+    attachments = buildStartingMessage(jobName, commitMessage, author)
   } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage(commitMessage, author)
+    attachments = buildSuccessMessage(jobName, commitMessage, author)
   } else {
-    attachments = buildFailureMessage(commitMessage, author)
+    attachments = buildFailureMessage(jobName, commitMessage, author)
   }
 
   notifySlack("", channel, attachments)
 }
 
-def buildStartingMessage(String commitMessage = "", String author = "") {
+def buildStartingMessage(String jobName = "", String commitMessage = "", String author = "") {
   return [
     [
-      title: "${jobName}, build #${env.BUILD_NUMBER} :fingers_crossed:",
-      title_link: "${env.BUILD_URL}",
+      title: "$jobName, build #$env.BUILD_NUMBER :fingers_crossed:",
+      title_link: "$env.BUILD_URL",
       color: "warning",
       text: "STARTING\n$author",
       fields: [
@@ -108,12 +108,12 @@ def buildStartingMessage(String commitMessage = "", String author = "") {
   ]
 }
 
-def buildSuccessMessage(String commitMessage = "", String author = "") {
+def buildSuccessMessage(String jobName = "", String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   return [
     [
-      title: "${jobName}, build #${env.BUILD_NUMBER} :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
-      title_link: "${env.BUILD_URL}",
+      title: "$jobName, build #$env.BUILD_NUMBER :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
+      title_link: "$env.BUILD_URL",
       color: "good",
       text: "SUCCESS\n$author",
       fields: [
@@ -124,7 +124,7 @@ def buildSuccessMessage(String commitMessage = "", String author = "") {
         ],
         [
           title: "Test Results",
-          value: "${testSummary}",
+          value: testSummary,
           short: true
         ],
         [
@@ -137,13 +137,13 @@ def buildSuccessMessage(String commitMessage = "", String author = "") {
   ]
 }
 
-def buildFailureMessage(String commitMessage = "", String author = "") {
+def buildFailureMessage(String jobName = "", String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [
     [
-      title: "${jobName}, build #${env.BUILD_NUMBER} :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
-      title_link: "${env.BUILD_URL}",
+      title: "$jobName, build #$env.BUILD_NUMBER :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+      title_link: "$env.BUILD_URL",
       color: "danger",
       text: "FAILED\n$author",
       "mrkdwn_in": ["fields"],
@@ -168,7 +168,7 @@ def buildFailureMessage(String commitMessage = "", String author = "") {
     [
       title: "Failed Tests",
       color: "danger",
-      text: "${failedTestsString}",
+      text: failedTestsString,
       "mrkdwn_in": ["text"],
     ]
   ]

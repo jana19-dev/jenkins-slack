@@ -48,7 +48,7 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
-def call(String buildStatus = "STARTED", String channel = '#general', String commitMessage = "", String author = "") {
+def call(String buildStatus = "STARTED", String channel = '#general', String commitMessage = "", String author = "", String globalError = "") {
 
   // build status of null means ongoing build
   def attachments = []
@@ -57,7 +57,7 @@ def call(String buildStatus = "STARTED", String channel = '#general', String com
   } else if (buildStatus == 'SUCCESS') {
     attachments = buildSuccessMessage(commitMessage, author)
   } else {
-    attachments = buildFailureMessage(commitMessage, author)
+    attachments = buildFailureMessage(commitMessage, author, globalError)
   }
 
   notifySlack("", channel, attachments)
@@ -105,7 +105,7 @@ def buildSuccessMessage(String commitMessage = "", String author = "") {
   ]
 }
 
-def buildFailureMessage(String commitMessage = "", String author = "") {
+def buildFailureMessage(String commitMessage = "", String author = "", String globalError = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [
@@ -132,6 +132,12 @@ def buildFailureMessage(String commitMessage = "", String author = "") {
       title: "Failed Tests",
       color: "danger",
       text: failedTestsString,
+      "mrkdwn_in": ["text"],
+    ],
+    [
+      title: "General Error",
+      color: "danger",
+      text: globalError,
       "mrkdwn_in": ["text"],
     ]
   ]

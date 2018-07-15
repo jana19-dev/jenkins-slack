@@ -51,7 +51,7 @@ def getAllFailedTests() {
 def call(String channel = '#general', String branch = "", String commitMessage = "", String author = "") {
 
   // build status of null means ongoing build
-  def buildStatus =  "$currentBuild .result" ?: 'STARTED'
+  def buildStatus =  "$currentBuild.result" ?: 'STARTED'
   def attachments = []
   if (buildStatus == 'STARTED') {
     attachments = buildStartingMessage(branch, commitMessage, author)

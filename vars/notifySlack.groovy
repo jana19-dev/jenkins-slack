@@ -100,7 +100,7 @@ def buildStartingMessage(String commitMessage = "") {
         ],
         [
           title: "Last Commit",
-          value: "${commitMessage}",
+          value: commitMessage,
           short: true
         ]
       ]
@@ -129,7 +129,7 @@ def buildSuccessMessage(String commitMessage = "") {
         ],
         [
           title: "Last Commit",
-          value: "${commitMessage}",
+          value: commitMessage,
           short: false
         ]
       ]
@@ -160,7 +160,7 @@ def buildFailureMessage(String commitMessage = "") {
         ],
         [
           title: "Last Commit",
-          value: "${commitMessage}",
+          value: commitMessage,
           short: false
         ]
       ]

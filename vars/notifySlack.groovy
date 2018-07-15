@@ -2,7 +2,6 @@
 
 import groovy.json.JsonOutput
 import hudson.tasks.test.AbstractTestResultAction
-import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
 
@@ -49,37 +48,34 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
-def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "", String author = "") {
-  def jobName = "$env.JOB_NAME"
-  // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+def call(String channel = '#general', String branch = "", String commitMessage = "", String author = "") {
 
-  //build status of null means SUCCESS
-  buildStatus =  buildStatus ?: 'SUCCESS'
+  // build status of null means ongoing build
+  buildStatus =  "$env.result" ?: 'STARTED'
 
   def attachments = []
   if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage(jobName, commitMessage, author)
+    attachments = buildStartingMessage(branch, commitMessage, author)
   } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage(jobName, commitMessage, author)
+    attachments = buildSuccessMessage(branch, commitMessage, author)
   } else {
-    attachments = buildFailureMessage(jobName, commitMessage, author)
+    attachments = buildFailureMessage(branch, commitMessage, author)
   }
 
   notifySlack("", channel, attachments)
 }
 
-def buildStartingMessage(String jobName = "", String commitMessage = "", String author = "") {
+def buildStartingMessage(String branch = "", String commitMessage = "", String author = "") {
   return [
     [
-      title: "$jobName, build #$env.BUILD_NUMBER :fingers_crossed:",
+      title: "$env.JOB_BASE_NAME, build #$env.BUILD_NUMBER :fingers_crossed:",
       title_link: "$env.BUILD_URL",
       color: "warning",
       text: "STARTING\n$author",
       fields: [
         [
           title: "Branch",
-          value: "$env.BRANCH_NAME",
+          value: branch,
           short: true
         ],
         [
@@ -92,18 +88,18 @@ def buildStartingMessage(String jobName = "", String commitMessage = "", String 
   ]
 }
 
-def buildSuccessMessage(String jobName = "", String commitMessage = "", String author = "") {
+def buildSuccessMessage(String branch = "", String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   return [
     [
-      title: "$jobName, build #$env.BUILD_NUMBER :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
+      title: "$env.JOB_BASE_NAME, build #$env.BUILD_NUMBER :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
       title_link: "$env.BUILD_URL",
       color: "good",
       text: "SUCCESS\n$author",
       fields: [
         [
           title: "Branch",
-          value: "$env.BRANCH_NAME",
+          value: branch,
           short: true
         ],
         [
@@ -121,12 +117,12 @@ def buildSuccessMessage(String jobName = "", String commitMessage = "", String a
   ]
 }
 
-def buildFailureMessage(String jobName = "", String commitMessage = "", String author = "") {
+def buildFailureMessage(String branch = "", String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [
     [
-      title: "$jobName, build #$env.BUILD_NUMBER :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+      title: "$env.JOB_BASE_NAME, build #$env.BUILD_NUMBER :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
       title_link: "$env.BUILD_URL",
       color: "danger",
       text: "FAILED\n$author",
@@ -134,7 +130,7 @@ def buildFailureMessage(String jobName = "", String commitMessage = "", String a
       fields: [
         [
           title: "Branch",
-          value: "$env.BRANCH_NAME",
+          value: branch,
           short: true
         ],
         [

@@ -28,7 +28,7 @@ def buildStartingMessage() {
       title: "$env.JOB_NAME-$env.BUILD_NUMBER",
       title_link: "$env.BUILD_URL",
       color: "warning",
-      text: "Started :see_no_evil: :hear_no_evil: :speak_no_evil:",
+      text: "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:",
       fields: [
         [
           title: "Commit by $COMMIT_AUTHOR",

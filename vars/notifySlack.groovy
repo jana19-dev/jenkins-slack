@@ -87,7 +87,7 @@ def buildSuccessMessage() {
       title: "$env.BUILD_TAG :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
       title_link: "$env.BUILD_URL",
       color: "good",
-      text: "SUCCESS by $AUTHOR",
+      text: "SUCCESS by $AUTHOR: Duration ${currentBuild.durationString}",
       fields: [
         [
           title: "Last Commit",

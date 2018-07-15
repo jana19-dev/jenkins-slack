@@ -11,10 +11,6 @@ def getJobName() {
   jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 }
 
-def getLastCommitMessage() {
-  commitMessage = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
-}
-
 def getGitAuthor() {
   def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
   author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
@@ -22,7 +18,6 @@ def getGitAuthor() {
 
 def populateGlobalVariables() {
   getJobName()
-  getLastCommitMessage()
   getGitAuthor()
 }
 
@@ -69,10 +64,9 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
-def call(String buildStatus = 'STARTED', String channel = '#general', String testSummary = "", String failedTests = "") {
+def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "") {
   def jobName = ""
   def author = ""
-  def commitMessage = ""
 
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'

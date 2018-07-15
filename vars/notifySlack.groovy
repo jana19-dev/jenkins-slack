@@ -22,7 +22,8 @@ def getGitAuthor = {
 }
 
 
-def getTestSummary = { ->
+@NonCPS
+def getTestSummary = {
   def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
   def summary = ""
 
@@ -41,7 +42,8 @@ def getTestSummary = { ->
   return summary
 }
 
-def getAllFailedTests = { ->
+@NonCPS
+def getAllFailedTests = {
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def failedTestsString = "```"
 
@@ -64,8 +66,6 @@ def getAllFailedTests = { ->
  * Send Slack notification to the channel given based on buildStatus string
  */
 def call(String buildStatus = 'STARTED', String channel = '#general', String testSummary = "", String failedTests = "") {
-
-
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
 

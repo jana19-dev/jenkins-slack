@@ -167,5 +167,5 @@ def notifySlack(text, channel, attachments) {
     icon_url: jenkinsIcon,
     attachments: attachments
   ])
-  sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
+  // sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
 }

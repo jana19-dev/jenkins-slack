@@ -87,11 +87,11 @@ def buildFailureMessage(String globalError = "") {
     ]
   ])
   def failedTestsString = getAllFailedTests()
-  if (failedTestsString!='``````') {
+  if (failedTestsString!='') {
     message.add([
       title: "Failed Tests",
       color: "danger",
-      text: failedTestsString,
+      text: '```'+failedTestsString+'```',,
       "mrkdwn_in": ["text"],
     ])
   }
@@ -138,7 +138,7 @@ def getTestSummary() {
 
 @NonCPS
 def getAllFailedTests() {
-  def failedTestsString = "```"
+  def failedTestsString = ""
   def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
   if (testResultAction != null) {
     failedTests = testResultAction.getFailedTests()
@@ -146,6 +146,5 @@ def getAllFailedTests() {
       failedTestsString = failedTestsString + "${cr.getFullDisplayName()}\n"
     }
   }
-  failedTestsString = failedTestsString + "```"
   return failedTestsString
 }

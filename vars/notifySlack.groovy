@@ -75,17 +75,17 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
 
   def attachments = []
   if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage()
+    attachments = buildStartingMessage($commitMessage)
   } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage()
+    attachments = buildSuccessMessage($commitMessage)
   } else {
-    attachments = buildFailureMessage()
+    attachments = buildFailureMessage($commitMessage)
   }
 
   notifySlack("", channel, attachments)
 }
 
-def buildStartingMessage() {
+def buildStartingMessage(String commitMessage = "") {
   return [
     [
       title: "${jobName}, build #${env.BUILD_NUMBER} :fingers_crossed:",
@@ -108,7 +108,7 @@ def buildStartingMessage() {
   ]
 }
 
-def buildSuccessMessage() {
+def buildSuccessMessage(String commitMessage = "") {
   def testSummary = getTestSummary()
   return [
     [
@@ -137,7 +137,7 @@ def buildSuccessMessage() {
   ]
 }
 
-def buildFailureMessage() {
+def buildFailureMessage(String commitMessage = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [

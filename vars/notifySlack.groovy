@@ -94,7 +94,7 @@ def buildFailureMessage(String globalError = "") {
       "mrkdwn_in": ["text"],
     ],
     [
-      title: "Other Error",
+      title: "Error Details",
       color: "danger",
       text: globalError,
       "mrkdwn_in": ["text"],

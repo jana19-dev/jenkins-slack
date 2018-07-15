@@ -57,7 +57,7 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
   //build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
 
-  // def attachments = []
+  def attachments = []
   // if (buildStatus == 'STARTED') {
   //   attachments = buildStartingMessage(jobName, commitMessage, author)
   // } else if (buildStatus == 'SUCCESS') {

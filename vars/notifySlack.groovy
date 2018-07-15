@@ -28,7 +28,7 @@ def buildStartingMessage() {
       title: "$env.JOB_NAME-$env.BUILD_NUMBER",
       title_link: "$env.BUILD_URL",
       color: "warning",
-      text: "Started :fingers_crossed:",
+      text: "Started :see_no_evil: :hear_no_evil: :speak_no_evil:",
       fields: [
         [
           title: "Commit by $COMMIT_AUTHOR",
@@ -47,7 +47,7 @@ def buildSuccessMessage() {
       title: "$env.JOB_NAME-$env.BUILD_NUMBER",
       title_link: "$env.BUILD_URL",
       color: "good",
-      text: "Success after ${currentBuild.durationString} :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance:",
+      text: "Success after ${currentBuild.durationString} :awesome_dance: :disco_dance: :penguin_dance:",
       fields: [
         [
           title: "Commit by $COMMIT_AUTHOR",
@@ -71,7 +71,7 @@ def buildFailureMessage(String globalError = "") {
     title: "$env.JOB_NAME-$env.BUILD_NUMBER",
     title_link: "$env.BUILD_URL",
     color: "danger",
-    text: "Failed after ${currentBuild.durationString} :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+    text: "Failed after ${currentBuild.durationString} :crying_bear: :sad_pepe: :try_not_to_cry:",
     "mrkdwn_in": ["fields"],
     fields: [
       [

@@ -83,7 +83,9 @@ def buildFailureMessage(String globalError = "") {
         [
           title: "Test Results",
           value: "${testSummary}",
-          short: true
+          short: true,
+          text: failedTestsString,
+          "mrkdwn_in": ["text"],
         ]
       ]
     ],

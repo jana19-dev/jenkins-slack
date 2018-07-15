@@ -161,11 +161,12 @@ def buildFailureMessage(String jobName = "", String commitMessage = "", String a
 def notifySlack(text, channel, attachments) {
   def slackURL = credentials('160a1dfe-afa8-47f1-8867-19b88ee52530')
   def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
-  def payload = JsonOutput.toJson([text: text,
+  def payload = JsonOutput.toJson([
+    text: text,
     channel: channel,
     username: "Jenkins",
     icon_url: jenkinsIcon,
     attachments: attachments
   ])
-  // sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
+  sh "curl -X POST --data-urlencode \'payload=${payload}\' $slackURL"
 }

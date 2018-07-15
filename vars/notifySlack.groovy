@@ -99,7 +99,7 @@ def buildFailureMessage(String globalError = "") {
     message.add([
       title: "Error Details",
       color: "danger",
-      text: globalError,
+      text: '```'+globalError+'```',
       "mrkdwn_in": ["text"],
     ])
   }

@@ -18,7 +18,6 @@ def getGitAuthor() {
 
 def populateGlobalVariables() {
   getJobName()
-  getGitAuthor()
 }
 
 @NonCPS
@@ -64,9 +63,10 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
-def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "") {
-  def jobName = ""
-  def author = ""
+def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "", String author = "") {
+  def jobName = "${env.JOB_NAME}"
+  // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
+  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
@@ -75,23 +75,23 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
 
   def attachments = []
   if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage(commitMessage)
+    attachments = buildStartingMessage(commitMessage, author)
   } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage(commitMessage)
+    attachments = buildSuccessMessage(commitMessage, author)
   } else {
-    attachments = buildFailureMessage(commitMessage)
+    attachments = buildFailureMessage(commitMessage, author)
   }
 
   notifySlack("", channel, attachments)
 }
 
-def buildStartingMessage(String commitMessage = "") {
+def buildStartingMessage(String commitMessage = "", String author = "") {
   return [
     [
       title: "${jobName}, build #${env.BUILD_NUMBER} :fingers_crossed:",
       title_link: "${env.BUILD_URL}",
       color: "warning",
-      text: "STARTING\n${author}",
+      text: "STARTING\n$author",
       fields: [
         [
           title: "Branch",
@@ -108,14 +108,14 @@ def buildStartingMessage(String commitMessage = "") {
   ]
 }
 
-def buildSuccessMessage(String commitMessage = "") {
+def buildSuccessMessage(String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   return [
     [
       title: "${jobName}, build #${env.BUILD_NUMBER} :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
       title_link: "${env.BUILD_URL}",
       color: "good",
-      text: "SUCCESS\n${author}",
+      text: "SUCCESS\n$author",
       fields: [
         [
           title: "Branch",
@@ -137,7 +137,7 @@ def buildSuccessMessage(String commitMessage = "") {
   ]
 }
 
-def buildFailureMessage(String commitMessage = "") {
+def buildFailureMessage(String commitMessage = "", String author = "") {
   def testSummary = getTestSummary()
   def failedTestsString = getAllFailedTests()
   return [
@@ -145,7 +145,7 @@ def buildFailureMessage(String commitMessage = "") {
       title: "${jobName}, build #${env.BUILD_NUMBER} :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
       title_link: "${env.BUILD_URL}",
       color: "danger",
-      text: "FAILED\n${author}",
+      text: "FAILED\n$author",
       "mrkdwn_in": ["fields"],
       fields: [
         [

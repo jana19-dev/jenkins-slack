@@ -46,17 +46,17 @@ def getAllFailedTests() {
 }
 
 /**
- * Send Slack notification to the channel given based on buildStatus string
+ * Send Slack notification to the channel given based on errorOccured string
  */
-def call(buildStatus = null) {
+def call(errorOccured = null) {
   // build status of null means ongoing build
   def attachments = []
-  if (buildStatus == null) {
+  if (errorOccured == null) {
     attachments = buildStartingMessage()
-  } else if (buildStatus == false) {
+  } else if (errorOccured == false) {
     attachments = buildSuccessMessage()
   } else {
-    attachments = buildFailureMessage(buildStatus)
+    attachments = buildFailureMessage(errorOccured)
   }
 
   notifySlack("", CHANNEL, attachments)
@@ -112,7 +112,7 @@ def buildFailureMessage(String globalError = "") {
       title: "$env.BUILD_TAG :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
       title_link: "$env.BUILD_URL",
       color: "danger",
-      text: "FAILED by $AUTHOR",
+      text: "FAILED by $AUTHOR: Duration ${currentBuild.durationString}",
       "mrkdwn_in": ["fields"],
       fields: [
         [

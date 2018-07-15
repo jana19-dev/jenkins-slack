@@ -24,6 +24,11 @@ def getGitAuthor() {
   author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
 }
 
+def populateGlobalVariables = {
+  getJobName()
+  getLastCommitMessage()
+  getGitAuthor()
+}
 
 @NonCPS
 def getTestSummary() {
@@ -71,6 +76,8 @@ def getAllFailedTests() {
 def call(String buildStatus = 'STARTED', String channel = '#general', String testSummary = "", String failedTests = "") {
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
+
+  populateGlobalVariables()
 
   def attachments = []
   if (buildStatus == 'STARTED') {

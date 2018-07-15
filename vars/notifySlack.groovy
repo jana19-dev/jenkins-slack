@@ -104,7 +104,7 @@ def notifySlack(text, channel, attachments) {
     attachments: attachments
   ])
   withCredentials([string(credentialsId: '160a1dfe-afa8-47f1-8867-19b88ee52530', variable: 'slackURL')]) {
-    sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
+    sh "curl -X POST --data-urlencode \'payload=${payload}\' $slackURL"
   }
 }
 

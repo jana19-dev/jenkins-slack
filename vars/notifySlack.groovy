@@ -25,10 +25,10 @@ def call(errorOccured = null) {
 def buildStartingMessage() {
   return [
     [
-      title: "$env.JOB_NAME-$env.BUILD_NUMBER :fingers_crossed:",
+      title: "$env.JOB_NAME-$env.BUILD_NUMBER",
       title_link: "$env.BUILD_URL",
       color: "warning",
-      text: "Started",
+      text: "Started :fingers_crossed:",
       fields: [
         [
           title: "Commit by $COMMIT_AUTHOR",
@@ -44,10 +44,10 @@ def buildSuccessMessage() {
   def testSummary = getTestSummary()
   return [
     [
-      title: "$env.JOB_NAME-$env.BUILD_NUMBER  :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance:",
+      title: "$env.JOB_NAME-$env.BUILD_NUMBER",
       title_link: "$env.BUILD_URL",
       color: "good",
-      text: "Success after ${currentBuild.durationString}",
+      text: "Success after ${currentBuild.durationString} :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance:",
       fields: [
         [
           title: "Commit by $COMMIT_AUTHOR",
@@ -68,10 +68,10 @@ def buildFailureMessage(String globalError = "") {
   def testSummary = getTestSummary()
   def message = []
   message.add([
-    title: "$env.JOB_NAME-$env.BUILD_NUMBER  :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+    title: "$env.JOB_NAME-$env.BUILD_NUMBER",
     title_link: "$env.BUILD_URL",
     color: "danger",
-    text: "Failed after ${currentBuild.durationString}",
+    text: "Failed after ${currentBuild.durationString} :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
     "mrkdwn_in": ["fields"],
     fields: [
       [

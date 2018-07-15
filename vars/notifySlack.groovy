@@ -5,92 +5,116 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
+
+def jobName = ""
+def author = ""
+def commitMessage = ""
+
+def getJobName = {
+  jobName = "${env.JOB_NAME}"
+  // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
+  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+}
+
+def getLastCommitMessage = {
+  commitMessage = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+}
+
+def getGitAuthor = {
+  def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+  author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
+}
+
+
+def populateGlobalVariables = {
+  getJobName()
+  getLastCommitMessage()
+  getGitAuthor()
+}
+
+@NonCPS
+def getTestSummary = { ->
+  def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+  def summary = ""
+
+  if (testResultAction != null) {
+    def total = testResultAction.getTotalCount()
+    def failed = testResultAction.getFailCount()
+    def skipped = testResultAction.getSkipCount()
+
+    summary = "Passed: " + (total - failed - skipped)
+    summary = summary + (", Failed: " + failed)
+    summary = summary + (", Skipped: " + skipped)
+  }
+  else {
+    summary = "No tests found"
+  }
+  return summary
+}
+
+@NonCPS
+def getAllFailedTests = { ->
+    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    def failedTestsString = "```"
+
+    if (testResultAction != null) {
+      failedTests = testResultAction.getFailedTests()
+
+      if (failedTests.size() > 9) {
+        failedTests = failedTests.subList(0, 8)
+      }
+
+      for(CaseResult cr : failedTests) {
+        failedTestsString = failedTestsString + "${cr.getFullDisplayName()}:\n${cr.getErrorDetails()}\n\n"
+      }
+      failedTestsString = failedTestsString + "```"
+    }
+    return failedTestsString
+}
+
+
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
 def call(String buildStatus = 'STARTED', String channel = '#general', String testSummary = "", String failedTests = "") {
-
-  def jobName = ""
-  def author = ""
-  def commitMessage = ""
-
-
-  def getJobName = {
-    jobName = "${env.JOB_NAME}"
-    // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-  }
-
-  def getLastCommitMessage = {
-    commitMessage = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
-  }
-
-  def getGitAuthor = {
-    def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-    author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
-  }
-
-  @NonCPS
-  def getTestSummary = { ->
-    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-    def summary = ""
-
-    if (testResultAction != null) {
-      def total = testResultAction.getTotalCount()
-      def failed = testResultAction.getFailCount()
-      def skipped = testResultAction.getSkipCount()
-
-      summary = "Passed: " + (total - failed - skipped)
-      summary = summary + (", Failed: " + failed)
-      summary = summary + (", Skipped: " + skipped)
-    }
-    else {
-      summary = "No tests found"
-    }
-    return summary
-  }
-
-  @NonCPS
-  def getAllFailedTests = { ->
-      def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-      def failedTestsString = "```"
-
-      if (testResultAction != null) {
-        failedTests = testResultAction.getFailedTests()
-
-        if (failedTests.size() > 9) {
-          failedTests = failedTests.subList(0, 8)
-        }
-
-        for(CaseResult cr : failedTests) {
-          failedTestsString = failedTestsString + "${cr.getFullDisplayName()}:\n${cr.getErrorDetails()}\n\n"
-        }
-        failedTestsString = failedTestsString + "```"
-      }
-      return failedTestsString
-  }
-
-
-  def populateGlobalVariables = {
-    getJobName()
-    getLastCommitMessage()
-    getGitAuthor()
-  }
+  populateGlobalVariables()
 
   // build status of null means SUCCESS
   buildStatus =  buildStatus ?: 'SUCCESS'
 
+  def attachments = []
   if (buildStatus == 'STARTED') {
-    def details = """<p>${buildStatus}: Job '${jobName} [${env.BUILD_NUMBER}]':</p>
-      <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${jobName} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
-    slackSend (color: "FFFF00", message: details)
+    attachments = buildStartingMessage()
   } else if (buildStatus == 'SUCCESS') {
-    def attachments = buildSuccessMessage()
-    notifySlack("", channel, attachments)
+    attachments = buildSuccessMessage()
   } else {
-    def attachments = buildFailureMessage()
-    notifySlack("", channel, attachments)
+    attachments = buildFailureMessage()
   }
+
+  notifySlack("", channel, attachments)
+}
+
+def buildStartingMessage() {
+  return [
+    [
+      title: "${jobName}, build #${env.BUILD_NUMBER} :fingers_crossed:",
+      title_link: "${env.BUILD_URL}",
+      color: "warning",
+      text: "STARTING\n${author}",
+      fields: [
+        [
+          title: "Branch",
+          value: "$BRANCH_NAME",
+          short: true
+        ],
+        [
+          title: "Last Commit",
+          value: "${commitMessage}",
+          short: true
+        ]
+      ]
+    ]
+  ]
 }
 
 def buildSuccessMessage() {

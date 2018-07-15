@@ -65,6 +65,7 @@ def buildSuccessMessage() {
 
 def buildFailureMessage(String globalError = "") {
   def testSummary = getTestSummary()
+  echo globalError
   return [
     [
       title: "$env.JOB_NAME-$env.BUILD_NUMBER",

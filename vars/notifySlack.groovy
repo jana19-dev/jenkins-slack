@@ -101,7 +101,7 @@ def buildStartingMessage() {
       fields: [
         [
           title: "Branch",
-          value: "$BRANCH_NAME",
+          value: "${env.BRANCH_NAME}",
           short: true
         ],
         [
@@ -125,7 +125,7 @@ def buildSuccessMessage() {
       fields: [
         [
           title: "Branch",
-          value: "$BRANCH_NAME",
+          value: "${env.BRANCH_NAME}",
           short: true
         ],
         [
@@ -156,7 +156,7 @@ def buildFailureMessage() {
       fields: [
         [
           title: "Branch",
-          value: "$BRANCH_NAME",
+          value: "${env.BRANCH_NAME}",
           short: true
         ],
         [

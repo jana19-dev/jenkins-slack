@@ -66,14 +66,14 @@ def call(String buildStatus = "STARTED", String channel = '#general', String bra
 def buildStartingMessage(String branch = "", String commitMessage = "", String author = "") {
   return [
     [
-      title: "$env.JOB_BASE_NAME, build #$env.BUILD_NUMBER :fingers_crossed:",
+      title: "$env.BUILD_TAG :fingers_crossed:",
       title_link: "$env.BUILD_URL",
       color: "warning",
-      text: "STARTING\n$author",
+      text: "BUILD STARTED by $author",
       fields: [
         [
           title: "Branch",
-          value: branch,
+          value: "$env.BRANCH_NAME",
           short: true
         ],
         [
@@ -90,14 +90,14 @@ def buildSuccessMessage(String branch = "", String commitMessage = "", String au
   def testSummary = getTestSummary()
   return [
     [
-      title: "$env.JOB_BASE_NAME, build #$env.BUILD_NUMBER :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
+      title: "$env.BUILD_TAG :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
       title_link: "$env.BUILD_URL",
       color: "good",
       text: "SUCCESS\n$author",
       fields: [
         [
           title: "Branch",
-          value: branch,
+          value: "$env.BRANCH_NAME",
           short: true
         ],
         [
@@ -120,7 +120,7 @@ def buildFailureMessage(String branch = "", String commitMessage = "", String au
   def failedTestsString = getAllFailedTests()
   return [
     [
-      title: "$env.JOB_BASE_NAME, build #$env.BUILD_NUMBER :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
+      title: "$env.BUILD_TAG :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
       title_link: "$env.BUILD_URL",
       color: "danger",
       text: "FAILED\n$author",
@@ -128,7 +128,7 @@ def buildFailureMessage(String branch = "", String commitMessage = "", String au
       fields: [
         [
           title: "Branch",
-          value: branch,
+          value: "$env.BRANCH_NAME",
           short: true
         ],
         [

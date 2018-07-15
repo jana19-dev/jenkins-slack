@@ -66,7 +66,7 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
     attachments = buildFailureMessage(jobName, commitMessage, author)
   }
 
-  // notifySlack("", channel, attachments)
+  notifySlack("", channel, attachments)
 }
 
 def buildStartingMessage(String jobName = "", String commitMessage = "", String author = "") {

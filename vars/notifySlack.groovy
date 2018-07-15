@@ -2,7 +2,6 @@
 
 import groovy.json.JsonOutput
 import hudson.tasks.test.AbstractTestResultAction
-import hudson.tasks.junit.CaseResult
 
 
 /**
@@ -66,44 +65,33 @@ def buildSuccessMessage() {
 
 def buildFailureMessage(String globalError = "") {
   def testSummary = getTestSummary()
-  def message = []
-  message.add([
-    title: "$env.JOB_NAME-$env.BUILD_NUMBER",
-    title_link: "$env.BUILD_URL",
-    color: "danger",
-    text: "Failed after ${currentBuild.durationString} :crying_bear: :sad_pepe: :try_not_to_cry:",
-    "mrkdwn_in": ["fields"],
-    fields: [
-      [
-        title: "Commit by $COMMIT_AUTHOR",
-        value: COMMIT_MESSAGE,
-        short: true
-      ],
-      [
-        title: "Test Results",
-        value: "${testSummary}",
-        short: true
-      ]
-    ]
-  ])
-  def failedTestsString = getAllFailedTests()
-  if (failedTestsString!='') {
-    message.add([
-      title: "Failed Tests",
+  return [
+    [
+      title: "$env.JOB_NAME-$env.BUILD_NUMBER",
+      title_link: "$env.BUILD_URL",
       color: "danger",
-      text: '```'+failedTestsString+'```',
-      "mrkdwn_in": ["text"],
-    ])
-  }
-  if (globalError) {
-    message.add([
+      text: "Failed after ${currentBuild.durationString} :crying_bear: :sad_pepe: :try_not_to_cry:",
+      "mrkdwn_in": ["fields"],
+      fields: [
+        [
+          title: "Commit by $COMMIT_AUTHOR",
+          value: COMMIT_MESSAGE,
+          short: true
+        ],
+        [
+          title: "Test Results",
+          value: "${testSummary}",
+          short: true
+        ]
+      ]
+    ],
+    [
       title: "Error Details",
       color: "danger",
       text: '```'+globalError+'```',
       "mrkdwn_in": ["text"],
-    ])
-  }
-  return message
+    ]
+  ]
 }
 
 def notifySlack(text, channel, attachments) {
@@ -134,17 +122,4 @@ def getTestSummary() {
     summary = summary + (", Skipped: " + skipped)
   }
   return summary
-}
-
-@NonCPS
-def getAllFailedTests() {
-  def failedTestsString = ""
-  def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-  if (testResultAction != null) {
-    failedTests = testResultAction.getFailedTests()
-    for(CaseResult cr : failedTests) {
-      failedTestsString = failedTestsString + "${cr.getFullDisplayName()}\n"
-    }
-  }
-  return failedTestsString
 }

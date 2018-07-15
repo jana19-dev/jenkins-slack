@@ -46,17 +46,17 @@ def getAllFailedTests() {
 }
 
 /**
- * Send Slack notification to the channel given based on errorOccurred string
+ * Send Slack notification to the channel given based on buildStatus string
  */
-def call(errorOccurred = null) {
+def call(buildStatus = null) {
   // build status of null means ongoing build
   def attachments = []
-  if (errorOccurred == null) {
+  if (buildStatus == null) {
     attachments = buildStartingMessage()
-  } else if (errorOccurred == false) {
+  } else if (buildStatus == false) {
     attachments = buildSuccessMessage()
   } else {
-    attachments = buildFailureMessage(errorOccurred)
+    attachments = buildFailureMessage(buildStatus)
   }
 
   notifySlack("", CHANNEL, attachments)

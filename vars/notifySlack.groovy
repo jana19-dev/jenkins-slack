@@ -88,7 +88,7 @@ def buildSuccessMessage(String commitMessage = "", String author = "") {
       title: "$env.BUILD_TAG :awesome_dance: :banana_dance: :disco_dance: :hamster_dance: :penguin_dance: :panda_dance: :pepper_dance:",
       title_link: "$env.BUILD_URL",
       color: "good",
-      text: "SUCCESS\n$author",
+      text: "SUCCESS by $author",
       fields: [
         [
           title: "Last Commit",
@@ -113,7 +113,7 @@ def buildFailureMessage(String commitMessage = "", String author = "") {
       title: "$env.BUILD_TAG :crying: :crying_bear: :sad_pepe: :sad_poop: :try_not_to_cry:",
       title_link: "$env.BUILD_URL",
       color: "danger",
-      text: "FAILED\n$author",
+      text: "FAILED by $author",
       "mrkdwn_in": ["fields"],
       fields: [
         [

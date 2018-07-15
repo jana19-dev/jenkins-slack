@@ -56,7 +56,7 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String tes
       def failedTestsString = "```"
 
       if (testResultAction != null) {
-        def failedTests = testResultAction.getFailedTests()
+        failedTests = testResultAction.getFailedTests()
 
         if (failedTests.size() > 9) {
           failedTests = failedTests.subList(0, 8)

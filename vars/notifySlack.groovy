@@ -52,7 +52,7 @@ def call(String channel = '#general', String branch = "", String commitMessage =
 
   // build status of null means ongoing build
   def buildStatus =  "$env.result" ?: 'STARTED'
-
+  echo "$env.result";
   def attachments = []
   if (buildStatus == 'STARTED') {
     attachments = buildStartingMessage(branch, commitMessage, author)

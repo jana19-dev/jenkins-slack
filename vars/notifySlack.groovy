@@ -167,7 +167,7 @@ def notifySlack(text, channel, attachments) {
     icon_url: jenkinsIcon,
     attachments: attachments
   ])
-  withCredentials([usernamePassword(credentialsId: '160a1dfe-afa8-47f1-8867-19b88ee52530', variable: 'slackURL')]) {
+  withCredentials([string(credentialsId: '160a1dfe-afa8-47f1-8867-19b88ee52530', variable: 'slackURL')]) {
     sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
   }
 }

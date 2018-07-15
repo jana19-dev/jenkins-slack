@@ -48,11 +48,9 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on buildStatus string
  */
-def call(String buildStatus, String channel = '#general', String branch = "", String commitMessage = "", String author = "") {
+def call(String buildStatus = "STARTED", String channel = '#general', String branch = "", String commitMessage = "", String author = "") {
 
   // build status of null means ongoing build
-  buildStatus = "$buildStatus" ?: 'STARTED'
-  echo currentBuild.result
   def attachments = []
   if (buildStatus == 'STARTED') {
     attachments = buildStartingMessage(branch, commitMessage, author)

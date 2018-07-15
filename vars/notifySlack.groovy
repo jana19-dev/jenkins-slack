@@ -52,12 +52,12 @@ def getAllFailedTests() {
 def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "", String author = "") {
   def jobName = "$env.JOB_NAME"
   // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+  // jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
-  build status of null means SUCCESS
-  buildStatus =  buildStatus ?: 'SUCCESS'
+  // build status of null means SUCCESS
+  // buildStatus =  buildStatus ?: 'SUCCESS'
 
-  def attachments = []
+  // def attachments = []
   // if (buildStatus == 'STARTED') {
   //   attachments = buildStartingMessage(jobName, commitMessage, author)
   // } else if (buildStatus == 'SUCCESS') {

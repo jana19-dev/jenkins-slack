@@ -6,24 +6,24 @@ import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
 
 
-def getJobName = {
+def getJobName() {
   jobName = "${env.JOB_NAME}"
   // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
   return jobName.getAt(0..(jobName.indexOf('/') - 1))
 }
 
-def getLastCommitMessage = {
+def getLastCommitMessage() {
   return sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 }
 
-def getGitAuthor = {
+def getGitAuthor() {
   def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
   return sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
 }
 
 
 @NonCPS
-def getTestSummary = {
+def getTestSummary() {
   def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
   def summary = ""
 
@@ -43,7 +43,7 @@ def getTestSummary = {
 }
 
 @NonCPS
-def getAllFailedTests = {
+def getAllFailedTests() {
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def failedTestsString = "```"
 

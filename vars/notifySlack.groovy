@@ -50,14 +50,14 @@ def getAllFailedTests() {
  * Send Slack notification to the channel given based on buildStatus string
  */
 def call(String buildStatus = 'STARTED', String channel = '#general', String commitMessage = "", String author = "") {
-  def jobName = "$env.JOB_NAME"
+  // def jobName = "$env.JOB_NAME"
   // Strip the branch name out of the job name (ex: "Job Name/branch1" -> "Job Name")
-  jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+  // jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
   // build status of null means SUCCESS
-  buildStatus =  buildStatus ?: 'SUCCESS'
+  // buildStatus =  buildStatus ?: 'SUCCESS'
 
-  def attachments = []
+  // def attachments = []
   // if (buildStatus == 'STARTED') {
   //   attachments = buildStartingMessage(jobName, commitMessage, author)
   // } else if (buildStatus == 'SUCCESS') {
@@ -66,7 +66,7 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
   //   attachments = buildFailureMessage(jobName, commitMessage, author)
   // }
 
-  notifySlack("", channel, attachments)
+  // notifySlack("", channel, attachments)
 }
 
 def buildStartingMessage(String jobName = "", String commitMessage = "", String author = "") {

@@ -38,7 +38,7 @@ def getAllFailedTests() {
       }
 
       for(CaseResult cr : failedTests) {
-        failedTestsString = failedTestsString + "${cr.getFullDisplayName()}:\n${cr.getErrorDetails()}\n\n"
+        failedTestsString = failedTestsString + "${cr.getFullDisplayName()}\n"
       }
       failedTestsString = failedTestsString + "```"
     }

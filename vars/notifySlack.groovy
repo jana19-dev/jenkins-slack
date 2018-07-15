@@ -20,7 +20,7 @@ def getGitAuthor() {
   author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
 }
 
-def populateGlobalVariables = {
+def populateGlobalVariables() {
   getJobName()
   getLastCommitMessage()
   getGitAuthor()

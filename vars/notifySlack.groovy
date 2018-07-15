@@ -48,7 +48,7 @@ def getAllFailedTests() {
 /**
  * Send Slack notification to the channel given based on errorOccurred string
  */
-def call(Boolean errorOccurred = null, String channel = '#general', String commitMessage = "", String author = "") {
+def call(errorOccurred = null, String channel = '#general', String commitMessage = "", String author = "") {
 
   // build status of null means ongoing build
   def attachments = []

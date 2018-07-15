@@ -91,7 +91,7 @@ def buildFailureMessage(String globalError = "") {
     message.add([
       title: "Failed Tests",
       color: "danger",
-      text: '```'+failedTestsString+'```',,
+      text: '```'+failedTestsString+'```',
       "mrkdwn_in": ["text"],
     ])
   }

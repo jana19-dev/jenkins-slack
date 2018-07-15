@@ -55,7 +55,7 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
   jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
   //build status of null means SUCCESS
-  // buildStatus =  buildStatus ?: 'SUCCESS'
+  buildStatus =  buildStatus ?: 'SUCCESS'
 
   // def attachments = []
   // if (buildStatus == 'STARTED') {

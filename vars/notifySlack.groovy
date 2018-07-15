@@ -75,11 +75,11 @@ def call(String buildStatus = 'STARTED', String channel = '#general', String com
 
   def attachments = []
   if (buildStatus == 'STARTED') {
-    attachments = buildStartingMessage("${commitMessage}")
+    attachments = buildStartingMessage(commitMessage)
   } else if (buildStatus == 'SUCCESS') {
-    attachments = buildSuccessMessage("${commitMessage}")
+    attachments = buildSuccessMessage(commitMessage)
   } else {
-    attachments = buildFailureMessage("${commitMessage}")
+    attachments = buildFailureMessage(commitMessage)
   }
 
   notifySlack("", channel, attachments)

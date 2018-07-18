@@ -31,7 +31,7 @@ def call(Map config) {
       ]
     )
   }
-  if (status == 'STARTED' || status == null) {
+  if (status == 'STARTED') {
     color = "warning"
     text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
   } else if (status == 'SUCCESS') {

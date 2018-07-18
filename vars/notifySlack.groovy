@@ -16,6 +16,7 @@ def call(Map config) {
     commitMessage = sh(returnStdout: true, script: "cd ${WORKSPACE} && git log -1 --pretty=%B").trim() // Auto generated
     commitAuthor = sh(returnStdout: true, script: "cd ${WORKSPACE} && git --no-pager show -s --format=%an").trim() // Auto generated
   } catch (e) {
+    sh "echo ${e.message}"
     commitMessage = ''
     commitAuthor = ''
   }

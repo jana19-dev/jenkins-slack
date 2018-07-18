@@ -15,21 +15,17 @@ def call(Map config) {
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
   def color, text
-  def fields = [
-    [
-      title: "Commit by $commitAuthor",
-      value: commitMessage,
-      short: true
-    ]
-  ]
+  def fields = [[
+    title: "Commit by $commitAuthor",
+    value: commitMessage,
+    short: true
+  ]]
   if (branchName != '') {
-    fields.add(
-      [
-        title: "Branch Name",
-        value: branchName,
-        short: true
-      ]
-    )
+    fields.add([
+      title: "Branch Name",
+      value: branchName,
+      short: true
+    ])
   }
   if (status == 'STARTED') {
     color = "warning"
@@ -43,27 +39,21 @@ def call(Map config) {
     text = "Failed after ${currentBuild.durationString} :crying_bear: :sad_pepe: :try_not_to_cry:"
     fields.add([title: "Test Results", value: testSummary, short: true])
   }
-
-  def summary = [
-    [
-      title: "$env.JOB_NAME-$env.BUILD_NUMBER",
-      title_link: "$env.BUILD_URL",
-      color: color,
-      "mrkdwn_in": ["fields"],
-      fields: fields
-    ]
-  ]
+  def summary = [[
+    title: "$env.JOB_NAME-$env.BUILD_NUMBER",
+    title_link: "$env.BUILD_URL",
+    color: color,
+    "mrkdwn_in": ["fields"],
+    fields: fields
+  ]]
   if (message != '') {
-    summary.add(
-      [
-        title: "More Details",
-        color: "warning",
-        text: '```'+"$message"+'```',
-        "mrkdwn_in": ["text"],
-      ]
-    )
+    summary.add([
+      title: "Details",
+      color: "danger",
+      text: '```'+"$message"+'```',
+      "mrkdwn_in": ["text"],
+    ])
   }
-
   sendMessage(text, channel, summary)
 }
 

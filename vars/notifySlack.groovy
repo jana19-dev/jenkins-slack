@@ -12,8 +12,10 @@ def call(Map config) {
   message = config.get('message', '')
   channel = config.get('channel', '#builds')
   branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
-  commitMessage = config.get('commitMessage', '')
-  commitAuthor = config.get('commitAuthor', '')
+  // commitMessage = config.get('commitMessage', '')
+  // commitAuthor = config.get('commitAuthor', '')
+  commitMessage = sh(returnStdout: true, script: "cd ${WORKSPACE} && git log -1 --pretty=%B").trim() // Auto generated
+  commitAuthor = sh(returnStdout: true, script: "cd ${WORKSPACE} && git --no-pager show -s --format=%an").trim() // Auto generated
   sh "echo ${WORKSPACE}"
   def color, text
   def fields = []

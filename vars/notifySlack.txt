@@ -1,4 +1,4 @@
-<strong>notifySlack(errorOccured=null)</strong>
+<strong>notifySlack(Map config)</strong>
 
 <p>
     Sends notification via Slack.

@@ -4,8 +4,11 @@
 Send a slack notification for the current build
 
 Usage:
+```
+@Library('slack-notify') _ // import global shared library
 
-`notifySlack status: currentBuild.currentResult, message: errorMessage, channel: '#builds'`
+notifySlack status: currentBuild.currentResult, message: errorMessage, channel: '#builds'
+```
 ```
   status = 'STARTED' or 'SUCCESS' or 'FAILURE'
   message = Any custom message you want to display in `details` section

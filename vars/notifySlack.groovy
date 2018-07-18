@@ -14,7 +14,6 @@ def call(Map config) {
   branchName = config.get('branchName', '')
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
-  sh "echo $status"
   def color, text
   def fields = [
     [
@@ -32,7 +31,7 @@ def call(Map config) {
       ]
     )
   }
-  if (status == 'STARTED') {
+  if (status == 'STARTED' || status == null) {
     color = "warning"
     text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
   } else if (status == 'SUCCESS') {

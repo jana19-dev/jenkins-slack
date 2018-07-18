@@ -27,17 +27,18 @@ def call(Map config) {
       short: true
     ])
   }
+  def testSummary = getTestSummary()
   if (status == 'STARTED') {
     color = "warning"
     text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
   } else if (status == 'SUCCESS') {
     color = "good"
     text = "Success after ${currentBuild.durationString} :awesome_dance: :disco_dance: :penguin_dance:"
-    fields.add([title: "Test Results", value: testSummary, short: true])
+    if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   } else { // status == "FAILURE"
     color = "danger"
     text = "Failed after ${currentBuild.durationString} :crying_bear: :sad_pepe: :try_not_to_cry:"
-    fields.add([title: "Test Results", value: testSummary, short: true])
+    if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   }
   def summary = [[
     title: "$env.JOB_NAME-$env.BUILD_NUMBER",
@@ -74,7 +75,7 @@ def sendMessage(text, channel, attachments) {
 
 @NonCPS
 def getTestSummary() {
-  def summary = "No tests found"
+  def summary = ""
   def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
   if (testResultAction != null) {
     def total = testResultAction.getTotalCount()

@@ -11,6 +11,7 @@ def call(Map config) {
   status = config.get('status', 'STARTED')
   message = config.get('message', '')
   channel = config.get('channel', '#builds')
+  branchName = config.get('branchName', '')
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
   def color, text
@@ -21,7 +22,15 @@ def call(Map config) {
       short: false
     ]
   ]
-
+  if (branchName != '') {
+    fields.add(
+      [
+        title: "Branch Name",
+        value: branchName,
+        short: true
+      ]
+    )
+  }
   if (status == 'STARTED') {
     color = "warning"
     text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
@@ -40,7 +49,6 @@ def call(Map config) {
       title: "$env.JOB_NAME-$env.BUILD_NUMBER",
       title_link: "$env.BUILD_URL",
       color: color,
-      text: text,
       "mrkdwn_in": ["fields"],
       fields: fields
     ]
@@ -56,13 +64,13 @@ def call(Map config) {
     )
   }
 
-  sendMessage("", channel, summary)
+  sendMessage(text, channel, summary)
 }
 
 def sendMessage(text, channel, attachments) {
   def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
   def payload = JsonOutput.toJson([
-    text: "I WANT TO SE WHAT FOES IN HERE",
+    text: text,
     channel: channel,
     username: "Jenkins",
     icon_url: jenkinsIcon,

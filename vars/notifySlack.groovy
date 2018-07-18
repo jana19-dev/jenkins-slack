@@ -14,6 +14,7 @@ def call(Map config) {
   branchName = config.get('branchName', '')
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
+  sh "echo config"
   def color, text
   def fields = [
     [

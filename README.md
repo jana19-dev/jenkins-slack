@@ -18,6 +18,9 @@ Usage:
 ## Build Passed
 ![build-pass](media/02.gif)
 
+## Build Passed With Custom Message
+![build-pass](media/06.gif)
+
 ## Build Failed (Failing Tests)
 ![build-fail-tests](media/05.gif)
 

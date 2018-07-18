@@ -2,6 +2,9 @@
 
 <p>
     Sends notification via Slack.
-    Defaults to sending "Started" notification if errorOccured==null.
-    Pass the errorOccured string/boolean and it will customize the notification based on that.
+    Defaults to sending "Started" notification.
+    Pass a Map of values.
+      - status: 'STARTED' or 'SUCCESS' or 'FAILURE'
+      - message: Any custom message you want to display in `details` section
+      - channel: Slack channel to post: (eg) #builds
 </p>

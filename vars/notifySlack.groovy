@@ -56,6 +56,7 @@ def call(Map config) {
     fields: fields
   ]]
   if (message != '') {
+    color = status == 'SUCCESS' ? 'good' : 'danger'
     summary.add([
       title: "Details",
       color: "danger",

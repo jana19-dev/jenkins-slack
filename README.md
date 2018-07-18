@@ -1,7 +1,7 @@
 <img src="media/logo.png" alt="logo" width="100px"/>
 
 # Jenkins Slack Notification
-Send a Slack notifications based on given config values
+Send a slack notification for the current build
 
 Usage:
 

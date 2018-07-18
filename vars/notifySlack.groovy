@@ -59,7 +59,7 @@ def call(Map config) {
     color = status == 'SUCCESS' ? 'good' : 'danger'
     summary.add([
       title: "Details",
-      color: "danger",
+      color: color,
       text: '```'+"$message"+'```',
       "mrkdwn_in": ["text"],
     ])

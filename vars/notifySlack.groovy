@@ -39,18 +39,18 @@ def call(Map config) {
   def testSummary = getTestSummary()
   if (status == 'STARTED') {
     color = "warning"
-    text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil: :jenkins_triggered:"
+    text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
   } else if (status == 'SUCCESS') {
     color = "good"
-    text = "Success after ${currentBuild.durationString} :yay: :dancing-bear: :penguin_dance:"
+    text = "Success after ${currentBuild.durationString} :awesome_dance: :disco_dance: :penguin_dance:"
     if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   } else if (status == 'UNSTABLE') {
     color = "#F28500"
-    text = "Unstable after ${currentBuild.durationString} :beaver: :facepalm: :suspect:"
+    text = "Unstable after ${currentBuild.durationString} :thinking_face: :confused: :hand:"
     if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   } else { // status == "FAILURE"
     color = "danger"
-    text = "Failed after ${currentBuild.durationString} :sob: :sad_panda: :scream:"
+    text = "Failed after ${currentBuild.durationString} :crying_bear: :crying: :sad_pepe:"
     if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   }
   def summary = [[

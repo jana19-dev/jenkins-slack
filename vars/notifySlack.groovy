@@ -15,11 +15,14 @@ def call(Map config) {
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
   def color, text
-  def fields = [[
-    title: "Commit by $commitAuthor",
-    value: commitMessage,
-    short: true
-  ]]
+  def fields = []
+  if (commitMessage != '') {
+    fields.add([
+      title: "Commit by $commitAuthor",
+      value: commitMessage,
+      short: true
+    ])
+  }
   if (branchName != '') {
     fields.add([
       title: "Branch Name",
@@ -59,7 +62,7 @@ def call(Map config) {
 }
 
 def sendMessage(text, channel, attachments) {
-  def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
+  def jenkinsIcon = 'http://www.perfecto.io/wp-content/uploads/2017/12/jenkins-and-perfecto.png'
   def payload = JsonOutput.toJson([
     text: text,
     channel: channel,

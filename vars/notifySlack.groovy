@@ -14,13 +14,13 @@ def call(Map config) {
   branchName = config.get('branchName', '')
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
-  sh "echo config"
+  sh "echo $status"
   def color, text
   def fields = [
     [
       title: "Commit by $commitAuthor",
       value: commitMessage,
-      short: false
+      short: true
     ]
   ]
   if (branchName != '') {

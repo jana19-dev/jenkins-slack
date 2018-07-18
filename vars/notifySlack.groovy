@@ -14,6 +14,7 @@ def call(Map config) {
   branchName = config.get('branchName', '')
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
+  sh "echo ${WORKSPACE}"
   def color, text
   def fields = []
   if (commitMessage != '') {

@@ -10,12 +10,13 @@ import hudson.tasks.test.AbstractTestResultAction
 def call(Map config) {
   status = config.get('status', 'STARTED')
   message = config.get('message', '')
-  channel = config.get('channel', '#builds')
-  branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
+  channel = config.get('channel', '#opstastic')
   try {
+    branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
     commitMessage = sh(returnStdout: true, script: "cd ${WORKSPACE} && git log -1 --pretty=%B").trim() // Auto generated
     commitAuthor = sh(returnStdout: true, script: "cd ${WORKSPACE} && git --no-pager show -s --format=%an").trim() // Auto generated
   } catch (e) {
+    branchName = ''
     commitMessage = ''
     commitAuthor = ''
   }
@@ -38,14 +39,18 @@ def call(Map config) {
   def testSummary = getTestSummary()
   if (status == 'STARTED') {
     color = "warning"
-    text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
+    text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil: :jenkins_triggered:"
   } else if (status == 'SUCCESS') {
     color = "good"
-    text = "Success after ${currentBuild.durationString} :awesome_dance: :disco_dance: :penguin_dance:"
+    text = "Success after ${currentBuild.durationString} :yay: :dancing-bear: :penguin_dance:"
+    if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
+  } else if (status == 'UNSTABLE') {
+    color = "#F28500"
+    text = "Unstable after ${currentBuild.durationString} :beaver: :facepalm: :suspect:"
     if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   } else { // status == "FAILURE"
     color = "danger"
-    text = "Failed after ${currentBuild.durationString} :crying_bear: :sad_pepe: :try_not_to_cry:"
+    text = "Failed after ${currentBuild.durationString} :sob: :sad_panda: :scream:"
     if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
   }
   def summary = [[
@@ -56,7 +61,7 @@ def call(Map config) {
     fields: fields
   ]]
   if (message != '') {
-    color = status == 'SUCCESS' ? 'good' : 'danger'
+    color = status == 'SUCCESS' ? 'good' : '#F28500'
     summary.add([
       title: "Details",
       color: color,
@@ -76,7 +81,7 @@ def sendMessage(text, channel, attachments) {
     icon_url: jenkinsIcon,
     attachments: attachments
   ])
-  withCredentials([string(credentialsId: '160a1dfe-afa8-47f1-8867-19b88ee52530', variable: 'slackURL')]) {
+  withCredentials([string(credentialsId: 'slack-webhook-url', variable: 'slackURL')]) {
     sh "curl -X POST --data-urlencode \'payload=$payload\' $slackURL"
   }
 }

@@ -11,7 +11,7 @@ def call(Map config) {
   status = config.get('status', 'STARTED')
   message = config.get('message', '')
   channel = config.get('channel', '#builds')
-  branchName = config.get('branchName', '')
+  branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
   commitMessage = config.get('commitMessage', '')
   commitAuthor = config.get('commitAuthor', '')
   sh "echo ${WORKSPACE}"

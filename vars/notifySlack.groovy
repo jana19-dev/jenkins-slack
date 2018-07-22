@@ -11,13 +11,12 @@ def call(Map config) {
   message = config.get('message', '')
   channel = config.get('channel', '#opstastic')
   color = config.get('color', 'warning')
-  status = config.get('status', currentBuild.result)
+  status = config.get('status', currentBuild.currentResult)
   try {
     branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
     commitMessage = sh(returnStdout: true, script: "git log -1 --pretty=%B").trim() // Auto generated
     commitAuthor = sh(returnStdout: true, script: "git --no-pager show -s --format=%an").trim() // Auto generated
   } catch (e) {
-    status = 'STARTED'
     branchName = ''
     commitMessage = ''
     commitAuthor = ''

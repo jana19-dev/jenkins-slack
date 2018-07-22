@@ -8,80 +8,68 @@ import hudson.tasks.test.AbstractTestResultAction
  * Send a Slack notification based on given config values
  */
 def call(Map config) {
-  pipeline {
-    agent any
-    stages {
-      stage('Notify') {
-        steps {
-          script {
-            status = config.get('status', 'STARTED')
-            message = config.get('message', '')
-            channel = config.get('channel', '#opstastic')
-            try {
-              branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
-              commitMessage = sh(returnStdout: true, script: "git log -1 --pretty=%B").trim() // Auto generated
-              commitAuthor = sh(returnStdout: true, script: "git --no-pager show -s --format=%an").trim() // Auto generated
-            } catch (e) {
-              branchName = ''
-              commitMessage = ''
-              commitAuthor = ''
-            }
-            def color, text
-            def fields = []
-            if (commitMessage != '') {
-              fields.add([
-                title: "Commit by $commitAuthor",
-                value: commitMessage,
-                short: true
-              ])
-            }
-            if (branchName != '') {
-              fields.add([
-                title: "Branch Name",
-                value: branchName,
-                short: true
-              ])
-            }
-            def testSummary = getTestSummary()
-            if (status == 'STARTED') {
-              color = "warning"
-              text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
-            } else if (status == 'SUCCESS') {
-              color = "good"
-              text = "Success after ${currentBuild.durationString} :awesome_dance: :disco_dance: :penguin_dance:"
-              if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
-            } else if (status == 'UNSTABLE') {
-              color = "#F28500"
-              text = "Unstable after ${currentBuild.durationString} :thinking_face: :confused: :hand:"
-              if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
-            } else { // status == "FAILURE"
-              color = "danger"
-              text = "Failed after ${currentBuild.durationString} :crying_bear: :crying: :sad_pepe:"
-              if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
-            }
-            def summary = [[
-              title: "$env.JOB_NAME-$env.BUILD_NUMBER",
-              title_link: "$env.BUILD_URL",
-              color: color,
-              "mrkdwn_in": ["fields"],
-              fields: fields
-            ]]
-            if (message != '') {
-              color = status == 'SUCCESS' ? 'good' : '#F28500'
-              summary.add([
-                title: "Details",
-                color: color,
-                text: '```'+"$message"+'```',
-                "mrkdwn_in": ["text"],
-              ])
-            }
-            sendMessage(text, channel, summary)
-          }
-        }
-      }
-    }
+  status = config.get('status', 'STARTED')
+  message = config.get('message', '')
+  channel = config.get('channel', '#opstastic')
+  try {
+    branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
+    commitMessage = sh(returnStdout: true, script: "git log -1 --pretty=%B").trim() // Auto generated
+    commitAuthor = sh(returnStdout: true, script: "git --no-pager show -s --format=%an").trim() // Auto generated
+  } catch (e) {
+    branchName = ''
+    commitMessage = ''
+    commitAuthor = ''
   }
-
+  def color, text
+  def fields = []
+  if (commitMessage != '') {
+    fields.add([
+      title: "Commit by $commitAuthor",
+      value: commitMessage,
+      short: true
+    ])
+  }
+  if (branchName != '') {
+    fields.add([
+      title: "Branch Name",
+      value: branchName,
+      short: true
+    ])
+  }
+  def testSummary = getTestSummary()
+  if (status == 'STARTED') {
+    color = "warning"
+    text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
+  } else if (status == 'SUCCESS') {
+    color = "good"
+    text = "Success after ${currentBuild.durationString} :awesome_dance: :disco_dance: :penguin_dance:"
+    if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
+  } else if (status == 'UNSTABLE') {
+    color = "#F28500"
+    text = "Unstable after ${currentBuild.durationString} :thinking_face: :confused: :hand:"
+    if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
+  } else { // status == "FAILURE"
+    color = "danger"
+    text = "Failed after ${currentBuild.durationString} :crying_bear: :crying: :sad_pepe:"
+    if (testSummary!="") fields.add([title: "Test Results", value: testSummary, short: true])
+  }
+  def summary = [[
+    title: "$env.JOB_NAME-$env.BUILD_NUMBER",
+    title_link: "$env.BUILD_URL",
+    color: color,
+    "mrkdwn_in": ["fields"],
+    fields: fields
+  ]]
+  if (message != '') {
+    color = status == 'SUCCESS' ? 'good' : '#F28500'
+    summary.add([
+      title: "Details",
+      color: color,
+      text: '```'+"$message"+'```',
+      "mrkdwn_in": ["text"],
+    ])
+  }
+  sendMessage(text, channel, summary)
 }
 
 def sendMessage(text, channel, attachments) {

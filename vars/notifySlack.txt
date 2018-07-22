@@ -7,4 +7,5 @@
       - status: 'STARTED' or 'SUCCESS' or 'FAILURE' or 'UNSTABLE'
       - message: Any custom message you want to display in `details` section
       - channel: Slack channel to post: (eg) #builds
+      - color: Value that can either be one of 'good', 'warning', 'danger', or any hex color code
 </p>

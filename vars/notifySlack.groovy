@@ -10,7 +10,7 @@ import hudson.tasks.test.AbstractTestResultAction
 def call(Map config) {
   message = config.get('message', '')
   channel = config.get('channel', '#opstastic')
-  color = config.get('color', 'warning')
+  color = config.get('color', '#D4DADF')
   status = config.get('status', currentBuild.currentResult)
   try {
     branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))

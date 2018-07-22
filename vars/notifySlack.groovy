@@ -8,20 +8,20 @@ import hudson.tasks.test.AbstractTestResultAction
  * Send a Slack notification based on given config values
  */
 def call(Map config) {
-  status = config.get('status', 'STARTED')
+  status = config.get('status', env.currentBuild.currentResult)
   message = config.get('message', '')
   channel = config.get('channel', '#opstastic')
+  color = config.get('color', 'warning')
   try {
     branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
     commitMessage = sh(returnStdout: true, script: "git log -1 --pretty=%B").trim() // Auto generated
     commitAuthor = sh(returnStdout: true, script: "git --no-pager show -s --format=%an").trim() // Auto generated
   } catch (e) {
-    sh "echo ${e.message}"
     branchName = ''
     commitMessage = ''
     commitAuthor = ''
   }
-  def color, text
+  def text
   def fields = []
   if (commitMessage != '') {
     fields.add([
@@ -39,7 +39,6 @@ def call(Map config) {
   }
   def testSummary = getTestSummary()
   if (status == 'STARTED') {
-    color = "warning"
     text = "Build Started :see_no_evil: :hear_no_evil: :speak_no_evil:"
   } else if (status == 'SUCCESS') {
     color = "good"
@@ -73,7 +72,7 @@ def call(Map config) {
   try {
     sendMessage(text, channel, summary)
   } catch (e) {
-    slackSend color: color, message: text, channel: channel
+    slackSend color: color, message: message, channel: channel
   }
 }
 

@@ -10,9 +10,10 @@ Usage:
 notifySlack status: currentBuild.currentResult, message: errorMessage, channel: '#builds'
 ```
 ```
-  status = 'STARTED' or 'SUCCESS' or 'FAILURE'
-  message = Any custom message you want to display in `details` section
-  channel = Slack channel to post: (eg) #builds
+  message = (Optional) Any custom message you want to display in `details` section
+  status = (Optional - defaults to 'STARTED') 'STARTED' or 'SUCCESS' or 'UNSTABLE' or 'FAILURE'
+  channel = (Optional - defaults to '#builds') Slack channel to post: (eg) #builds
+  color = (Optional - defaults to based on currentBuild.currentResult) Value that can either be one of 'good', 'warning', 'danger', or any hex color code
 ```
 
 ## Build Started

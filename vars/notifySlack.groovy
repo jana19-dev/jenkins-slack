@@ -11,7 +11,7 @@ def call(Map config) {
   message = config.get('message', '')
   channel = config.get('channel', '#opstastic')
   color = config.get('color', 'warning')
-  status = config.get('status', currentBuild.currentResult)
+  status = config.get('status', currentBuild.result)
   try {
     branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
     commitMessage = sh(returnStdout: true, script: "git log -1 --pretty=%B").trim() // Auto generated

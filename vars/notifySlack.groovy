@@ -13,8 +13,8 @@ def call(Map config) {
   channel = config.get('channel', '#opstastic')
   try {
     branchName = env.GIT_BRANCH.getAt((env.GIT_BRANCH.indexOf('/')+1..-1))
-    commitMessage = sh(returnStdout: true, script: "cd ${WORKSPACE} && git log -1 --pretty=%B").trim() // Auto generated
-    commitAuthor = sh(returnStdout: true, script: "cd ${WORKSPACE} && git --no-pager show -s --format=%an").trim() // Auto generated
+    commitMessage = sh(returnStdout: true, script: "git log -1 --pretty=%B").trim() // Auto generated
+    commitAuthor = sh(returnStdout: true, script: "git --no-pager show -s --format=%an").trim() // Auto generated
   } catch (e) {
     branchName = ''
     commitMessage = ''

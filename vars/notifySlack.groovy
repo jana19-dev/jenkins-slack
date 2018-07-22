@@ -69,7 +69,11 @@ def call(Map config) {
       "mrkdwn_in": ["text"],
     ])
   }
-  sendMessage(text, channel, summary)
+  try {
+    sendMessage(text, channel, summary)
+  } catch (e) {
+    slackSend color: color, message: text, channel: channel
+  }
 }
 
 def sendMessage(text, channel, attachments) {
